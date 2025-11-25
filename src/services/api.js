@@ -1,15 +1,19 @@
 import axios from 'axios';
 
+// Load API URL from environment variable
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// Example:
+VITE_API_URL = 'https://team-collaboration-backend-1.onrender.com/api'
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
-// Board API calls
+// ================= BOARD API =================
 export const boardAPI = {
   getAll: async () => {
     const response = await api.get('/boards');
@@ -39,10 +43,10 @@ export const boardAPI = {
   getTasks: async (boardId) => {
     const response = await api.get(`/boards/${boardId}/tasks`);
     return response.data;
-  }
+  },
 };
 
-// Task API calls
+// ================= TASK API =================
 export const taskAPI = {
   getById: async (id) => {
     const response = await api.get(`/tasks/${id}`);
@@ -62,14 +66,19 @@ export const taskAPI = {
   delete: async (id) => {
     const response = await api.delete(`/tasks/${id}`);
     return response.data;
-  }
+  },
 };
 
-// Error interceptor
+// ================= ERROR HANDLING =================
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.error || error.message || 'An error occurred';
+    const message =
+      error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message ||
+      'An error occurred';
+
     console.error('API Error:', message);
     return Promise.reject(new Error(message));
   }
